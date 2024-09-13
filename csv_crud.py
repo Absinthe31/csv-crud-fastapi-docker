@@ -10,7 +10,7 @@ fieldnames = ['id','nome','cognome','codice_fiscale']
 
 
 @app.post('/items/')
-async def insert(data: dict = Body()):
+async def create(data: dict = Body()):
 
     with open('file.csv', 'a', newline='') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames)
@@ -18,3 +18,14 @@ async def insert(data: dict = Body()):
 
     return data
 
+@app.get('/items/')
+async def read():
+
+    result = []
+
+    with open('file.csv', 'r', newline='') as csvfile: 
+        reader = csv.DictReader(csvfile, fieldnames)
+        for row in reader:
+            result.append(row)
+
+    return result[1:]
