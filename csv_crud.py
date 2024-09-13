@@ -19,7 +19,7 @@ async def create(data: dict = Body()):
     return data
 
 @app.get('/items/')
-async def read():
+async def read_all():
 
     result = []
 
@@ -29,3 +29,15 @@ async def read():
             result.append(row)
 
     return result[1:]
+
+@app.get('/items/{id}')
+async def read(id: str):
+
+    with open('file.csv', 'r', newline='') as csvfile: 
+        reader = csv.DictReader(csvfile, fieldnames)
+        for row in reader:
+            if row['id'] == id:
+                result = row
+
+    return result
+
