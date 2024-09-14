@@ -30,16 +30,31 @@ async def read_all():
 
     return result[1:]
 
-@app.get('/items/{id}')
-async def read(id: str):
+@app.get('/items/{token}')
+async def read_or_count(token: str):
 
-    with open('file.csv', 'r', newline='') as csvfile: 
-        reader = csv.DictReader(csvfile, fieldnames)
-        for row in reader:
-            if row['id'] == id:
-                result = row
+    if token == 'count':
 
-    return result
+        data = []
+
+        with open('file.csv', 'r', newline='') as csvfile: 
+            reader = csv.DictReader(csvfile, fieldnames)
+            for row in reader:
+                data.append(row)
+
+        return {"count" : len(data[1:])}
+
+    else: 
+
+        result = None
+
+        with open('file.csv', 'r', newline='') as csvfile: 
+            reader = csv.DictReader(csvfile, fieldnames)
+            for row in reader:
+                if row['id'] == token:
+                    result = row
+
+        return result if result != None else {"message" : "id not found"}
 
 @app.put('/items/{id}')
 async def update(id: str, data: dict=Body()):
@@ -90,4 +105,3 @@ async def delete(id: str):
                 writer.writerow(row)
 
     return {"message" : "Item deleted succesfully"}
-
