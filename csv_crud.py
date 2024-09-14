@@ -41,3 +41,53 @@ async def read(id: str):
 
     return result
 
+@app.put('/items/{id}')
+async def update(id: str, data: dict=Body()):
+
+    old_data = []
+
+    with open('file.csv', 'r', newline='') as csvfile: 
+        reader = csv.DictReader(csvfile, fieldnames)
+        for row in reader:
+            old_data.append(row)
+
+    with open('file.csv', 'w', newline='') as csvfile: 
+         writer = csv.DictWriter(csvfile, fieldnames)
+         writer.writeheader()
+
+    with open('file.csv', 'a', newline='') as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames)
+
+        for row in old_data[1:]:
+
+            if row['id'] == id:
+                writer.writerow(data)
+            else:
+                writer.writerow(row)
+
+    return data
+
+@app.delete('/items/{id}')
+async def delete(id: str):
+
+    old_data = []
+
+    with open('file.csv', 'r', newline='') as csvfile: 
+        reader = csv.DictReader(csvfile, fieldnames)
+        for row in reader:
+            old_data.append(row)
+
+    with open('file.csv', 'w', newline='') as csvfile: 
+         writer = csv.DictWriter(csvfile, fieldnames)
+         writer.writeheader()
+
+    with open('file.csv', 'a', newline='') as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames)
+
+        for row in old_data[1:]:
+
+            if row['id'] != id:
+                writer.writerow(row)
+
+    return {"message" : "Item deleted succesfully"}
+
